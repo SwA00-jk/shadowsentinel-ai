@@ -1,22 +1,74 @@
-const scanUrl = (req, res) => 
-    {
+const scanUrl = (req, res) =>
+     {
     const { url } = req.body;
-
+  
     if (!url) 
         {
-            return res.status(400).json(
-                {
-                    error: "URL is required"           
-                });
+      return res.status(400).json({
+        error: "URL is required"
+      });
     }
-
-    res.status(200).json({
-        url,
-        riskScore: 12,
-        status: "Safe"
+  
+    let riskScore = 0;
+  
+    // HTTPS Check
+    if (!url.startsWith("https://")) 
+        {
+      riskScore += 30;
+    }
+  
+    // Suspicious Keywords
+    const suspiciousWords = [
+      "login",
+      "verify",
+      "secure",
+      "update",
+      "account",
+      "bank"
+    ];
+  
+    suspiciousWords.forEach(word => 
+        {
+      if (url.toLowerCase().includes(word))
+         {
+        riskScore += 15;
+      }
     });
-};
-
-module.exports = {
+  
+    // Long URL Check
+    if (url.length > 50) 
+        {
+      riskScore += 10;
+    }
+  
+    // Too Many Hyphens
+    const hyphenCount = (url.match(/-/g) || []).length;
+  
+    if (hyphenCount > 2) 
+        {
+      riskScore += 10;
+    }
+  
+    // Determine Status
+    let status = "Safe";
+  
+    if (riskScore >= 50) 
+        {
+      status = "High Risk";
+    } 
+    else if (riskScore >= 20) 
+        {
+      status = "Suspicious";
+    }
+  
+    res.status(200).json({
+      url,
+      riskScore,
+      status
+    });
+  };
+  
+  module.exports = 
+  {
     scanUrl
-};
+  };
