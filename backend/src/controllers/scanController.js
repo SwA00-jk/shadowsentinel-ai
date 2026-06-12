@@ -1,4 +1,6 @@
+const { checkThreatIndicators } = require("../services/threatServices");
 const scanUrl = (req, res) =>
+    
      {
     const { url } = req.body;
   
@@ -18,23 +20,10 @@ const scanUrl = (req, res) =>
     }
   
     // Suspicious Keywords
-    const suspiciousWords = [
-      "login",
-      "verify",
-      "secure",
-      "update",
-      "account",
-      "bank"
-    ];
-  
-    suspiciousWords.forEach(word => 
-        {
-      if (url.toLowerCase().includes(word))
-         {
-        riskScore += 15;
-      }
-    });
-  
+    const threatData = checkThreatIndicators(url);
+
+    riskScore += threatData.score;
+
     // Long URL Check
     if (url.length > 50) 
         {
@@ -62,9 +51,10 @@ const scanUrl = (req, res) =>
     }
   
     res.status(200).json({
-      url,
-      riskScore,
-      status
+        url,
+        riskScore,
+        status,
+        threatIndicators: threatData.indicators
     });
   };
   
