@@ -1,6 +1,6 @@
 const { checkThreatIndicators } = require("../services/threatServices");
-const scanUrl = (req, res) =>
-    
+const pool = require("../config/database");
+const scanUrl = async (req, res) =>
      {
     const { url } = req.body;
   
@@ -50,6 +50,12 @@ const scanUrl = (req, res) =>
       status = "Suspicious";
     }
   
+    await pool.query(
+      `INSERT INTO scan_history (url, risk_score, status)
+       VALUES ($1, $2, $3)`,
+      [url, riskScore, status]
+  );
+
     res.status(200).json({
         url,
         riskScore,

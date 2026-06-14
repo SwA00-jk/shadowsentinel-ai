@@ -3,6 +3,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 
 const scanRoutes = require("./routes/scanRoutes");
+const historyRoutes = require("./routes/historyRoutes");
 
 dotenv.config();
 
@@ -16,5 +17,6 @@ app.get("/", (req, res) => {
   });
 
   app.use("/api", scanRoutes);
+  app.use("/api", historyRoutes);
   
 module.exports = app;
