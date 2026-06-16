@@ -56,12 +56,24 @@ const scanUrl = async (req, res) =>
       [url, riskScore, status]
   );
 
-    res.status(200).json({
-        url,
-        riskScore,
-        status,
-        threatIndicators: threatData.indicators
-    });
+  res.status(200).json({
+    url,
+    riskScore,
+    status,
+    threatIndicators: threatData.indicators,
+    threatType: threatData.threatType,
+    confidence: threatData.confidence,
+    recommendation: threatData.recommendation,
+  
+    explanation: `
+  This URL was flagged because it contains suspicious keywords:
+  ${threatData.indicators.join(", ")}.
+  
+  These keywords are commonly associated with phishing and scam websites.
+  
+  The calculated risk score exceeded the threshold for ${status}.
+  `
+  });
   };
   
   module.exports = 
